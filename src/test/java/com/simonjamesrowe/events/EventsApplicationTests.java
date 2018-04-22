@@ -24,7 +24,7 @@ public class EventsApplicationTests {
 
   @Before
   public void before() throws IOException {
-    eventService.loadIntoElasticSearch();
+    eventService.loadIntoElasticSearch(4);
   }
 
   @Test

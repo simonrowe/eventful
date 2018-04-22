@@ -39,6 +39,8 @@ public class SourceEventConverter implements Converter<SourceEvent, Event> {
               .stream()
               .map(c -> c.getId())
               .collect(Collectors.toList()));
+    }
+    if (sourceEvent.getStartTime() != null) {
       Calendar cal = new GregorianCalendar();
       cal.setTimeInMillis(sourceEvent.getStartTime().getMillis());
       e.setStartTime(cal.getTime());

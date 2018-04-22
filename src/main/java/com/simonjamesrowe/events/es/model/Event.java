@@ -43,6 +43,12 @@ public class Event {
   @Field(type = FieldType.keyword)
   private List<String> categoryIds;
 
+  @Field(type = FieldType.text)
+  private String weatherDescription;
+
+  @Field(type = FieldType.keyword)
+  private String weatherIcon;
+
   public String getId() {
     return id;
   }
@@ -121,6 +127,22 @@ public class Event {
 
   public void setNameSort(String nameSort) {
     this.nameSort = nameSort;
+  }
+
+  public String getWeatherDescription() {
+    return weatherDescription;
+  }
+
+  public void setWeatherDescription(String weatherDescription) {
+    this.weatherDescription = weatherDescription;
+  }
+
+  public String getWeatherIcon() {
+    return weatherIcon;
+  }
+
+  public void setWeatherIcon(String weatherIcon) {
+    this.weatherIcon = weatherIcon;
   }
 
   @Override

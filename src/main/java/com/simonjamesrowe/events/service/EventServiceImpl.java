@@ -2,9 +2,11 @@ package com.simonjamesrowe.events.service;
 
 import com.simonjamesrowe.events.converter.SourceEventConverter;
 import com.simonjamesrowe.events.dao.EventDao;
+import com.simonjamesrowe.events.dao.WeatherDao;
 import com.simonjamesrowe.events.es.dao.ElasticSearchEventDao;
 import com.simonjamesrowe.events.es.model.Event;
 import com.simonjamesrowe.events.model.EventResponse;
+import com.simonjamesrowe.events.model.WeatherResponse;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,18 +32,30 @@ public class EventServiceImpl implements InitializingBean {
   @Value("${events.rest.endpoint}")
   private String eventsRestEndpoint;
 
+  @Value("${weather.api.endpoint}")
+  private String weatherRestEndpoint;
+
+  @Value("${weather.api.key}")
+  private String weatherApiKey;
+
+  @Value("${weather.api.image}")
+  private String weatherIconUrl;
+
   @Value("${events.api.param.location}")
   private String location;
 
   @Value("${events.api.param.include}")
   private String include;
 
+  @Autowired private WeatherDao weatherDao;
+
   @Autowired private ElasticsearchTemplate elasticsearchTemplate;
 
-  private UriBuilder uriBuilder() {
+  private UriBuilder eventUriBuilder() {
     DefaultUriBuilderFactory factory =
         new DefaultUriBuilderFactory(
-            eventsRestEndpoint + "?app_key={appKey}&location={location}&include={include}");
+            eventsRestEndpoint
+                + "?app_key={appKey}&location={location}&include={include}&sort_order={sort_order}");
     return factory.builder();
   }
 
@@ -54,31 +68,48 @@ public class EventServiceImpl implements InitializingBean {
   /** Runs every half hour */
   @Scheduled(fixedRate = 60 * 30 * 1000)
   public void loadIntoElasticSearch() throws IOException {
-
+    WeatherResponse weather = weather();
     long pages = calculatePages();
     for (int i = 1; i <= pages; i++) {
-      loadPageIntoElasticSearch(i);
+      loadPageIntoElasticSearch(i, weather);
     }
   }
 
-  private void loadPageIntoElasticSearch(int pageNumber) throws IOException {
+  public void loadIntoElasticSearch(int maxPages) throws IOException {
+    WeatherResponse weather = weather();
+    long pages = calculatePages();
+    for (int i = 1; i <= pages && i <= maxPages; i++) {
+      loadPageIntoElasticSearch(i, weather);
+    }
+  }
+
+  protected WeatherResponse weather() throws IOException {
+    return weatherDao.get(
+        new DefaultUriBuilderFactory(weatherRestEndpoint).builder().build(weatherApiKey));
+  }
+
+  private void loadPageIntoElasticSearch(int pageNumber, WeatherResponse weatherResponse)
+      throws IOException {
     EventResponse eventResponse =
         sourceEventDao.get(
-            uriBuilder()
+            eventUriBuilder()
                 .query("page_size={pageSize}")
                 .query("page_number={pageNumber}")
                 .build(
                     apiKey,
                     location,
                     include,
+                    "date",
                     String.valueOf(pageSize),
                     String.valueOf(pageNumber)));
+    WeatherDecorator weatherDecorator = new WeatherDecorator(weatherResponse, weatherIconUrl);
     List<Event> elasticSearchDocuments =
         eventResponse
             .getEventData()
             .getEvents()
             .stream()
             .map(e -> sourceEventConverter.convert(e))
+            .map(w -> weatherDecorator.decorate(w))
             .collect(Collectors.toList());
     elasticSearchEventDao.saveAll(elasticSearchDocuments);
   }
@@ -86,7 +117,9 @@ public class EventServiceImpl implements InitializingBean {
   private long calculatePages() throws IOException {
     EventResponse eventResponse =
         sourceEventDao.get(
-            uriBuilder().query("count_only={count_only}").build(apiKey, location, include, "true"));
+            eventUriBuilder()
+                .query("count_only={count_only}")
+                .build(apiKey, location, include, "date", "true"));
     long size = eventResponse.getSize();
     return size % pageSize == 0 ? size / pageSize : (size / pageSize) + 1;
   }
