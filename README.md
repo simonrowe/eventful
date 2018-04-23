@@ -35,4 +35,4 @@ http://localhost:8080/api/events?q=(searchString}&sort=(sortField,asc|desc)&page
 #### Examples
 * http://localhost:8080/api/events?q=food&sort=startTime,asc *Finds all the events for search food and orders by startTime*
 
-* http://localhost:8080/api/events?q=rain&sort=venue,desc *Finds all the events where it will be raining, and orders by venue descending*
+* http://localhost:8080/api/events?q=rain&sort=venue.sort,desc *Finds all the events where it will be raining, and orders by venue descending*
