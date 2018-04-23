@@ -1,16 +1,12 @@
 package com.simonjamesrowe.events.es.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.*;
 
 import java.util.Date;
 import java.util.List;
 
-@JsonIgnoreProperties({"nameSort", "categorySort"})
 @Document(indexName = "event", type = "event")
 public class Event {
 
@@ -19,11 +15,11 @@ public class Event {
   @Field(type = FieldType.keyword)
   private String location;
 
-  @Field(type = FieldType.text)
+  @MultiField(
+    mainField = @Field(type = FieldType.text),
+    otherFields = {@InnerField(suffix = "sort", type = FieldType.keyword)}
+  )
   private String name;
-
-  @Field(type = FieldType.keyword)
-  private String nameSort;
 
   @Field(type = FieldType.text)
   private String description;
@@ -31,19 +27,25 @@ public class Event {
   @Field(type = FieldType.Date)
   private Date startTime;
 
-  @Field(type = FieldType.keyword)
+  @MultiField(
+    mainField = @Field(type = FieldType.text),
+    otherFields = {@InnerField(suffix = "sort", type = FieldType.keyword)}
+  )
   private String venue;
 
-  @Field(type = FieldType.keyword)
-  private String categorySort;
-
-  @Field(type = FieldType.keyword)
+  @MultiField(
+    mainField = @Field(type = FieldType.text),
+    otherFields = {@InnerField(suffix = "sort", type = FieldType.keyword)}
+  )
   private List<String> categories;
 
   @Field(type = FieldType.keyword)
   private List<String> categoryIds;
 
-  @Field(type = FieldType.text)
+  @MultiField(
+    mainField = @Field(type = FieldType.text),
+    otherFields = {@InnerField(suffix = "sort", type = FieldType.keyword)}
+  )
   private String weatherDescription;
 
   @Field(type = FieldType.keyword)
@@ -111,22 +113,6 @@ public class Event {
 
   public void setCategoryIds(List<String> categoryIds) {
     this.categoryIds = categoryIds;
-  }
-
-  public String getCategorySort() {
-    return categorySort;
-  }
-
-  public void setCategorySort(String categorySort) {
-    this.categorySort = categorySort;
-  }
-
-  public String getNameSort() {
-    return nameSort;
-  }
-
-  public void setNameSort(String nameSort) {
-    this.nameSort = nameSort;
   }
 
   public String getWeatherDescription() {

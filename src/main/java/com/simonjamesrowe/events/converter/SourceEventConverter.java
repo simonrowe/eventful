@@ -21,7 +21,6 @@ public class SourceEventConverter implements Converter<SourceEvent, Event> {
     }
     Event e = new Event();
     BeanUtils.copyProperties(sourceEvent, e, "startTime");
-    e.setNameSort(e.getName());
     if (sourceEvent.getCategories() != null
         && !CollectionUtils.isEmpty(sourceEvent.getCategories().getCategoryList())) {
       e.setCategories(
@@ -31,7 +30,6 @@ public class SourceEventConverter implements Converter<SourceEvent, Event> {
               .stream()
               .map(c -> c.getName())
               .collect(Collectors.toList()));
-      e.setCategorySort(e.getCategories().get(0));
       e.setCategoryIds(
           sourceEvent
               .getCategories()

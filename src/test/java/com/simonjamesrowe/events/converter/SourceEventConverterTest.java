@@ -41,13 +41,11 @@ public class SourceEventConverterTest {
     assertEquals("id1234", e.getId());
     assertEquals("London", e.getLocation());
     assertEquals("Test Event", e.getName());
-    assertEquals("Test Event", e.getNameSort());
     assertEquals("A truely exciting test event", e.getDescription());
     assertEquals(e.getStartTime().getTime(), event.getStartTime().getMillis());
     assertEquals("London Bridge", e.getVenue());
     assertEquals(Arrays.asList("Other", "Exciting"), e.getCategories());
     assertEquals(Arrays.asList("oth", "exc"), e.getCategoryIds());
-    assertEquals("Other", e.getCategorySort());
   }
 
   @Test
