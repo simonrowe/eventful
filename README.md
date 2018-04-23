@@ -27,10 +27,10 @@ http://localhost:8080/api/events?q=(searchString}&sort=(sortField,asc|desc)&page
 ````
 
 #### Sort Fields
-*   nameSort - sort by the name of the event
+*   name.sort - sort by the name of the event
 *   startTime - sort by the start time of the event
-*   venue - sort by the venue of the event
-*   categorySort - sort by the category of the event
+*   venue.sort - sort by the venue of the event
+*   categories.sort - sort by the category of the event
 
 #### Examples
 * http://localhost:8080/api/events?q=food&sort=startTime,asc *Finds all the events for search food and orders by startTime*
