@@ -26,13 +26,13 @@ http://localhost:8080/api/events?q=(searchString}&sort=(sortField,asc|desc)&page
 
 ````
 
-####Sort Fields
+#### Sort Fields
 *   nameSort - sort by the name of the event
 *   startTime - sort by the start time of the event
 *   venue - sort by the venue of the event
 *   categorySort - sort by the category of the event
 
-####Examples
+#### Examples
 * http://localhost:8080/api/events?q=food&sort=startTime,asc *Finds all the events for search food and orders by startTime*
 
 * http://localhost:8080/api/events?q=rain&sort=venue,desc *Finds all the events where it will be raining, and orders by venue descending*
