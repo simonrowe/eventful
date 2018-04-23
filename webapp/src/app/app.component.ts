@@ -18,8 +18,11 @@ export class AppComponent implements OnInit{
   ngOnInit(): void {
     this.http.get(environment.eventRestEndpoint).subscribe((res: any) => {
       this.searchResults = res;
-      console.log(this.searchResults);
     });
+  }
+
+  public hasResults(): boolean {
+    return this.searchResults != null && this.searchResults.content != null && this.searchResults.content.length > 0;
   }
 
 

@@ -24,20 +24,33 @@
 </header>
 
 <!-- Icons Grid -->
-<section>
+<section *ngIf="hasResults()">
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
         <table class="table table-striped">
           <thead>
             <tr>
-              <th scope="col">Start Time</th>
-              <th scope="col">Name</th>
-              <th scope="col">Venue</th>
-              <th scope="col">Weather</th>
+              <th scope="col" style="width:10%">Start Time</th>
+              <th scope="col" style="width:25%">Name</th>
+              <th scope="col" style="width:15%">Venue</th>
+              <th scope="col" style="width:15%">Category</th>
+              <th scope="col" style="width:20%">Weather</th>
               <th scope="col">&nbsp;</th>
             </tr>
           </thead>
+          <tbody>
+            <tr *ngFor="let event of searchResults.content">
+              <td>{{event.startTime}}</td>
+              <td [innerHtml]="event.name"></td>
+              <td>{{event.venue}}</td>
+              <td>
+                    <span *ngFor="let category of event.categories" [innerHtml]="category + '<br />'"> </span>
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
 
         </table>
       </div>
