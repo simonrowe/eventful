@@ -103,15 +103,19 @@ public class EventServiceImpl implements InitializingBean {
                     String.valueOf(pageSize),
                     String.valueOf(pageNumber)));
     WeatherDecorator weatherDecorator = new WeatherDecorator(weatherResponse, weatherIconUrl);
-    List<Event> elasticSearchDocuments =
-        eventResponse
-            .getEventData()
-            .getEvents()
-            .stream()
-            .map(e -> sourceEventConverter.convert(e))
-            .map(w -> weatherDecorator.decorate(w))
-            .collect(Collectors.toList());
-    elasticSearchEventDao.saveAll(elasticSearchDocuments);
+    if (eventResponse != null
+        && eventResponse.getEventData() != null
+        && eventResponse.getEventData().getEvents() != null) {
+      List<Event> elasticSearchDocuments =
+          eventResponse
+              .getEventData()
+              .getEvents()
+              .stream()
+              .map(e -> sourceEventConverter.convert(e))
+              .map(w -> weatherDecorator.decorate(w))
+              .collect(Collectors.toList());
+      elasticSearchEventDao.saveAll(elasticSearchDocuments);
+    }
   }
 
   private long calculatePages() throws IOException {

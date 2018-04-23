@@ -8,7 +8,7 @@
       "root": "src",
       "outDir": "../target/classes/static",
       "assets": [
-        "assets",
+        "assets/*",
         "favicon.ico"
       ],
       "index": "index.html",
